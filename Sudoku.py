@@ -1,56 +1,105 @@
+import sys,random
+from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtGui import QIcon
+from PyQt6 import uic, QtGui, QtCore, QtWidgets
+
+uifile = 'Sudoku.ui'
+form, base = uic.loadUiType(uifile)
+
+class MainWindow(base, form):
+    def __init__(self):
+        super(base, self).__init__()
+        # self.setWindowIcon(QtGui.QIcon('assets/icons/sudoku.png'))
+
+        self.board = None
+        self.solved_board = None
+
+        self.setupUi(self)
+        self.setWindowTitle("Sudoku")
+                
+        self.setFixedHeight(445)
+        self.setFixedWidth(935)
+        self.widgets = [self.tableWidget, self.tableWidget_2, self.tableWidget_3, 
+                        self.tableWidget_4, self.tableWidget_5, self.tableWidget_6, 
+                        self.tableWidget_7, self.tableWidget_8, self.tableWidget_9]
+
+        self.createGame()
+        
+    def createGame(self):
+        game = Sudoku([])
+        game.create_board()
+        self.board = game.board
+        game.print_board()
+        self.setTable()
+        game.solve()
+        self.solved_board = game.board
+
+    def resetBoard(self):
+        self.createGame()
+
+    def setTable(self):
+        for k in range(9):
+            widget = self.widgets[k]
+
+            for i in range(3):
+                h = i + 3 * (k // 3) # Need to increment rows for each widget
+                for j in range(3):
+                    l = j + 3 * (k % 3) # Need to repeat 3 columns for each widget but increment as well
+                    if self.board[h][l] != 0:
+                        widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(self.board[h][l])))
+                    else:
+                        widget.setItem(i, j, QtWidgets.QTableWidgetItem(""))    
+
 class Sudoku:
     '''Creating a Sudoku game using OOP and a backtracking algorithm'''
     def __init__(self, board):
         self.board = board
 
-    # def get_board(self):
-    #     return self.board
-
-    # def set_board(self, board):
-    #     self.board = board
-
     def print_board(self):
-        for i in range(len(self.board)):
+        for i in range(9):
+            # For every 3 rows, print a line
             if i % 3 == 0 and i != 0:
                 print("---------------------")
-        
-            for j in range(len(self.board[0])):
+
+            # For every 3 columns, print a wall
+            for j in range(9):
                 if j % 3 == 0 and j != 0:
                     print(" | ", end="")
-        
-                if j == 8:
-                    print(self.board[i][j])
-                else:
+
+                # Print the number with a space unless at the end of the row
+                if j != 8:
                     print(str(self.board[i][j]) + " ", end="")
+                else:
+                    print(self.board[i][j])
+
+    def find_empty(self):
+        for i in range(9):
+            for j in range(9):
+                if self.board[i][j] == 0:
+                    return (i, j)
+        return None
         
-    def valid(self, num, pos):
-        # Check row
-        for i in range(len(self.board[0])):
+    def validate(self, num, pos):
+        # Rows
+        for i in range(9):
             if self.board[pos[0]][i] == num and pos[1] != i:
                 return False
 
-        # Check column
-        for i in range(len(self.board)):
+        # Columns
+        for i in range(9):
             if self.board[i][pos[1]] == num and pos[0] != i:
                 return False
 
-        # Check box
-        box_x = pos[1] // 3
-        box_y = pos[0] // 3
+        # Cells
+        x = pos[1] // 3
+        y = pos[0] // 3
 
-        for i in range(box_y*3, box_y*3 + 3):
-            for j in range(box_x * 3, box_x*3 + 3):
+        for i in range(y * 3, y * 3 + 3):
+            for j in range(x * 3, x * 3 + 3):
                 if self.board[i][j] == num and (i,j) != pos:
                     return False
 
         return True
-
-    def find_empty(self):
-        for i in range(len(self.board)):
-            for j in range(len(self.board[0])):
-                if self.board[i][j] == 0:
-                    return (i, j)
-        return None
 
     def solve_board(self):
         find = self.find_empty()
@@ -61,7 +110,7 @@ class Sudoku:
 
         # Only need to check 1-9
         for i in range(1,10):
-            if self.valid(i, (row, col)):
+            if self.validate(i, (row, col)):
                 self.board[row][col] = i
 
                 if self.solve_board():
@@ -76,25 +125,69 @@ class Sudoku:
             return self.board
         else:
             return False
+    
+    def clear_board(self):
+        self.board = [[0 for i in range(9)] for j in range(9)]
+
+    def shuffle_board(self):
+        # Shuffle rows
+        for i in range(3):
+            for j in range(3):
+                if random.randint(0,1) == 1:
+                    temp = self.board[i]
+                    self.board[i] = self.board[j]
+                    self.board[j] = temp
+
+        # Shuffle columns
+        for i in range(3):
+            for j in range(3):
+                if random.randint(0,1) == 1:
+                    for k in range(9):
+                        temp = self.board[k][i]
+                        self.board[k][i] = self.board[k][j]
+                        self.board[k][j] = temp
+
+    def create_board(self):
+        # Create a randomly generate board
+        # First clear the board
+        self.clear_board()
+
+        # Add random num to cell
+        i = random.randint(0,8)
+        j = random.randint(0,8)
+        num = random.randint(1,9)
+        self.board[i][j] = num
+
+        # Solve the board
+        self.solve_board()
+
+        # Shuffle board
+        # random.shuffle(self.board)
+        self.shuffle_board()
+
+        # Remove numbers
+        self.remove_numbers()
+
+    def remove_numbers(self):
+        for i in range(9):
+            for j in range(9):
+                if random.randint(0,1) == 1:
+                    self.board[i][j] = 0
+
 
 def main():
+    app = QApplication(sys.argv)
 
-    board = [
-        [7,8,0,4,0,0,1,2,0],
-        [6,0,0,0,7,5,0,0,9],
-        [0,0,0,6,0,1,0,7,8],
-        [0,0,7,0,4,0,2,6,0],
-        [0,0,1,0,5,0,9,3,0],
-        [9,0,4,0,6,0,0,0,5],
-        [0,7,0,3,0,0,0,1,2],
-        [1,2,0,0,0,7,4,0,0],
-        [0,4,9,2,0,6,0,0,7]
-    ]
-    game = Sudoku(board)
-    game.print_board()
-    game.solve()
-    print("______________________________________________________")
-    game.print_board()
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+
+    # game = Sudoku([])
+    # game.create_board()
+    # game.print_board()
+    # game.solve()
+    # print("______________________________________________________")
+    # game.print_board()
 
 if __name__ == "__main__":
     main()
