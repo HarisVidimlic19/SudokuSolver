@@ -1,5 +1,5 @@
 import sys,random
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel
 from PyQt6.QtGui import QIcon
 from PyQt6 import uic, QtGui, QtCore, QtWidgets
 
@@ -9,33 +9,49 @@ form, base = uic.loadUiType(uifile)
 class MainWindow(base, form):
     def __init__(self):
         super(base, self).__init__()
-        # self.setWindowIcon(QtGui.QIcon('assets/icons/sudoku.png'))
 
-        self.board = None
-        self.solved_board = None
-
+        # Setup UI
+        self.auto_change = True # Used to prevent the event class from triggering when the board is being created
+        self.setWindowIcon(QtGui.QIcon('assets/icons/Sudoku.png'))
         self.setupUi(self)
-        self.setWindowTitle("Sudoku")
+        self.setWindowTitle("SUDOKU")
                 
         self.setFixedHeight(445)
         self.setFixedWidth(935)
+
+        # Global properties
+        self.board = None
+        self.solved_board = None
+        self.counter = 0
         self.widgets = [self.tableWidget, self.tableWidget_2, self.tableWidget_3, 
                         self.tableWidget_4, self.tableWidget_5, self.tableWidget_6, 
                         self.tableWidget_7, self.tableWidget_8, self.tableWidget_9]
-
-        self.createGame()
+        self.ids = [i.objectName() for i in self.widgets]
+        self.mistakes = self.findChildren(QtWidgets.QLabel)[1]
         
-    def createGame(self):
-        game = Sudoku([])
-        game.create_board()
-        self.board = game.board
+        self.widgets.installEventFilter(self, self.event, QtCore.QEvent.Type.Enter)
+
+        # Create the game
+        self.createGame([])
+        
+    def createGame(self,board):
+        self.auto_change = True
+        if board == []:
+            game = Sudoku([])
+            game.create_board()
+            self.board = game.board
+        else:
+            game = Sudoku(board)
+
         game.print_board()
         self.setTable()
         game.solve()
+        game.print_board()
         self.solved_board = game.board
+        self.auto_change = False
 
     def resetBoard(self):
-        self.createGame()
+        self.createGame(self.board)
 
     def setTable(self):
         for k in range(9):
@@ -50,6 +66,31 @@ class MainWindow(base, form):
                     else:
                         widget.setItem(i, j, QtWidgets.QTableWidgetItem(""))    
 
+    def editCell(self,i,j):
+        if self.auto_change:
+            return
+        id = self.sender().objectName()
+        widget = self.whichWidget(id)
+        k = self.ids.index(id)
+        h = i + 3 * (k // 3)
+        l = j + 3 * (k % 3)
+
+        if widget.item(i,j).text() != str(self.solved_board[h][l]):
+            widget.item(i,j).setBackground(QtGui.QColor(255,25,25))
+            self.counter += 1
+            QtWidgets.QLabel.setText(self.mistakes, str(self.counter))
+
+    def whichWidget(self,id):
+        if id in self.ids:
+            return self.widgets[self.ids.index(id)]
+        
+    def event(self, event):
+        # if event.type() == QtCore.QEvent.Type.KeyPress:
+        if event.type() == QtCore.QEvent.Type.Enter:
+            self.editCell(i,j)
+            
+        
+        return super(MainWindow, self).event(event)
 class Sudoku:
     '''Creating a Sudoku game using OOP and a backtracking algorithm'''
     def __init__(self, board):
