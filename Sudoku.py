@@ -1,21 +1,29 @@
 import sys,random
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel
-from PyQt6.QtGui import QIcon
-from PyQt6 import uic, QtGui, QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QTableWidgetItem
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import  QObject, Signal, Slot
+# from PyQt6 import uic
+
+# from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel
+# from PyQt6.QtGui import QIcon
+# from PyQt6 import uic, QtGui, QtCore, QtWidgets
+# from PyQt6.QtCore import  QObject, pyqtSignal, pyqtSlot
+from new_ui_Sudoku import Ui_MainWindow
 
 uifile = 'Sudoku.ui'
-form, base = uic.loadUiType(uifile)
+# form, base = uic.loadUiType(uifile)
 
-class MainWindow(base, form):
-    def __init__(self):
-        super(base, self).__init__()
+# class MainWindow(base, form):
+class MainWindow(QMainWindow, Ui_MainWindow):
+    def __init__(self, *args, obj=None, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
 
         # Setup UI
         self.auto_change = True # Used to prevent the event class from triggering when the board is being created
         self.setWindowIcon(QtGui.QIcon('assets/icons/Sudoku.png'))
         self.setupUi(self)
         self.setWindowTitle("SUDOKU")
-                
         self.setFixedHeight(445)
         self.setFixedWidth(935)
 
@@ -29,8 +37,6 @@ class MainWindow(base, form):
         self.ids = [i.objectName() for i in self.widgets]
         self.mistakes = self.findChildren(QtWidgets.QLabel)[1]
         
-        self.widgets.installEventFilter(self, self.event, QtCore.QEvent.Type.Enter)
-
         # Create the game
         self.createGame([])
         
@@ -71,26 +77,46 @@ class MainWindow(base, form):
             return
         id = self.sender().objectName()
         widget = self.whichWidget(id)
+        widget.blockSignals(True) # Prevents the event class from triggering once we change bckg color
         k = self.ids.index(id)
         h = i + 3 * (k // 3)
         l = j + 3 * (k % 3)
 
+        # If the input is wrong, change the background color to red and add to mistakes counter
         if widget.item(i,j).text() != str(self.solved_board[h][l]):
             widget.item(i,j).setBackground(QtGui.QColor(255,25,25))
             self.counter += 1
             QtWidgets.QLabel.setText(self.mistakes, str(self.counter))
+        else:
+            widget.item(i,j).setBackground(QtGui.QColor(255,255,255))
+
+        widget.blockSignals(False)
 
     def whichWidget(self,id):
         if id in self.ids:
             return self.widgets[self.ids.index(id)]
         
-    def event(self, event):
-        # if event.type() == QtCore.QEvent.Type.KeyPress:
-        if event.type() == QtCore.QEvent.Type.Enter:
-            self.editCell(i,j)
-            
-        
-        return super(MainWindow, self).event(event)
+    
+# class SignalFilter(QObject):
+#     signalOut = Signal(QWidget, int, int)
+#     def eventFilter(self, obj, event):
+#         # print(obj, event)
+#         if event.type() == QtCore.QEvent.Type.UpdateRequest:
+#             print("Update Request")
+#             print(obj, event)
+#         # if event.type() == QtCore.QEvent.Type.KeyPress:
+#         #     if event.key() == QtCore.Qt.Key.Key_Return or event.key() == QtCore.Qt.Key.Key_Enter:
+#         #         self.signalOut.emit(obj, obj.currentRow(), obj.currentColumn())
+#         #         obj.clearSelection()
+#         #         return True
+#         # # elif event.type() == QtCore.QEvent.Type.MouseButtonPress:
+#         # elif event.type() == QtGui.QMouseEvent.Type.MouseButtonDblClick:
+#         #     # self.signalOut.emit(obj, obj.currentRow(), obj.currentColumn())
+#         #     obj.clearSelection()
+#         #     return False
+#         # elif event.type() == QtCore.QEvent.Type.MouseButtonDblClick:
+#         #     print("Double Clicked")
+#         return super(SignalFilter, self).eventFilter(obj, event)
 class Sudoku:
     '''Creating a Sudoku game using OOP and a backtracking algorithm'''
     def __init__(self, board):
@@ -112,6 +138,7 @@ class Sudoku:
                     print(str(self.board[i][j]) + " ", end="")
                 else:
                     print(self.board[i][j])
+        print("\n")
 
     def find_empty(self):
         for i in range(9):
