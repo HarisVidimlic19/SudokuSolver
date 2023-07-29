@@ -1,27 +1,19 @@
-import sys,random
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QTableWidgetItem
+from sys import argv, exit
+from random import randint, shuffle
+from PySide6 import QtGui, QtWidgets
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem
 from PySide6.QtGui import QIcon
-from PySide6.QtCore import  QObject, Signal, Slot
-# from PyQt6 import uic
-
-# from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel
-# from PyQt6.QtGui import QIcon
-# from PyQt6 import uic, QtGui, QtCore, QtWidgets
-# from PyQt6.QtCore import  QObject, pyqtSignal, pyqtSlot
 from new_ui_Sudoku import Ui_MainWindow
 
 uifile = 'Sudoku.ui'
-# form, base = uic.loadUiType(uifile)
 
-# class MainWindow(base, form):
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         # Setup UI
         self.auto_change = True # Used to prevent the event class from triggering when the board is being created
-        self.setWindowIcon(QtGui.QIcon('assets/icons/Sudoku.png'))
+        self.setWindowIcon(QIcon('assets/icons/Sudoku.png'))
         self.setupUi(self)
         self.setWindowTitle("SUDOKU")
         self.setFixedHeight(445)
@@ -31,11 +23,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.board = None
         self.solved_board = None
         self.counter = 0
+        self.difficulty = 0
         self.widgets = [self.tableWidget, self.tableWidget_2, self.tableWidget_3, 
                         self.tableWidget_4, self.tableWidget_5, self.tableWidget_6, 
                         self.tableWidget_7, self.tableWidget_8, self.tableWidget_9]
         self.ids = [i.objectName() for i in self.widgets]
-        self.mistakes = self.findChildren(QtWidgets.QLabel)[1]
+        self.mistakes = self.findChildren(QLabel)[1]
         
         # Create the game
         self.createGame([])
@@ -44,10 +37,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.auto_change = True
         if board == []:
             game = Sudoku([])
-            game.create_board()
+            game.create_board(self.difficulty)
             self.board = game.board
         else:
             game = Sudoku(board)
+            game.remove_numbers(self.difficulty)
 
         game.print_board()
         self.setTable()
@@ -68,9 +62,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for j in range(3):
                     l = j + 3 * (k % 3) # Need to repeat 3 columns for each widget but increment as well
                     if self.board[h][l] != 0:
-                        widget.setItem(i, j, QtWidgets.QTableWidgetItem(str(self.board[h][l])))
+                        widget.setItem(i, j, QTableWidgetItem(str(self.board[h][l])))
                     else:
-                        widget.setItem(i, j, QtWidgets.QTableWidgetItem(""))    
+                        widget.setItem(i, j, QTableWidgetItem(""))    
 
     def editCell(self,i,j):
         if self.auto_change:
@@ -96,27 +90,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if id in self.ids:
             return self.widgets[self.ids.index(id)]
         
+    def newBoard(self):
+        self.createGame([])
     
-# class SignalFilter(QObject):
-#     signalOut = Signal(QWidget, int, int)
-#     def eventFilter(self, obj, event):
-#         # print(obj, event)
-#         if event.type() == QtCore.QEvent.Type.UpdateRequest:
-#             print("Update Request")
-#             print(obj, event)
-#         # if event.type() == QtCore.QEvent.Type.KeyPress:
-#         #     if event.key() == QtCore.Qt.Key.Key_Return or event.key() == QtCore.Qt.Key.Key_Enter:
-#         #         self.signalOut.emit(obj, obj.currentRow(), obj.currentColumn())
-#         #         obj.clearSelection()
-#         #         return True
-#         # # elif event.type() == QtCore.QEvent.Type.MouseButtonPress:
-#         # elif event.type() == QtGui.QMouseEvent.Type.MouseButtonDblClick:
-#         #     # self.signalOut.emit(obj, obj.currentRow(), obj.currentColumn())
-#         #     obj.clearSelection()
-#         #     return False
-#         # elif event.type() == QtCore.QEvent.Type.MouseButtonDblClick:
-#         #     print("Double Clicked")
-#         return super(SignalFilter, self).eventFilter(obj, event)
+    def autoSolve(self):
+        for k in range(9):
+            widget = self.widgets[k]
+
+            for i in range(3):
+                h = i + 3 * (k // 3) # Need to increment rows for each widget
+                for j in range(3):
+                    l = j + 3 * (k % 3) # Need to repeat 3 columns for each widget but increment as well
+                    widget.setItem(i, j, QTableWidgetItem(str(self.solved_board[h][l])))
+    
+    def selectDifficulty(self,i):
+        self.difficulty = i
+        self.createGame(self.board)
+        
 class Sudoku:
     '''Creating a Sudoku game using OOP and a backtracking algorithm'''
     def __init__(self, board):
@@ -177,7 +167,9 @@ class Sudoku:
             row, col = find
 
         # Only need to check 1-9
-        for i in range(1,10):
+        cells = [1,2,3,4,5,6,7,8,9]
+        shuffle(cells) # Randomize the order of the numbers for variability in board creation
+        for i in cells:
             if self.validate(i, (row, col)):
                 self.board[row][col] = i
 
@@ -201,7 +193,7 @@ class Sudoku:
         # Shuffle rows
         for i in range(3):
             for j in range(3):
-                if random.randint(0,1) == 1:
+                if randint(0,1) == 1:
                     temp = self.board[i]
                     self.board[i] = self.board[j]
                     self.board[j] = temp
@@ -209,21 +201,21 @@ class Sudoku:
         # Shuffle columns
         for i in range(3):
             for j in range(3):
-                if random.randint(0,1) == 1:
+                if randint(0,1) == 1:
                     for k in range(9):
                         temp = self.board[k][i]
                         self.board[k][i] = self.board[k][j]
                         self.board[k][j] = temp
 
-    def create_board(self):
+    def create_board(self, d=0):
         # Create a randomly generate board
         # First clear the board
         self.clear_board()
 
         # Add random num to cell
-        i = random.randint(0,8)
-        j = random.randint(0,8)
-        num = random.randint(1,9)
+        i = randint(0,8)
+        j = randint(0,8)
+        num = randint(1,9)
         self.board[i][j] = num
 
         # Solve the board
@@ -234,28 +226,31 @@ class Sudoku:
         self.shuffle_board()
 
         # Remove numbers
-        self.remove_numbers()
+        self.remove_numbers(d)
 
-    def remove_numbers(self):
+    def remove_numbers(self, d):
+
         for i in range(9):
             for j in range(9):
-                if random.randint(0,1) == 1:
+                # Remove numbers based on difficulty
+                if d == 0:
+                    selector = randint(0,1)
+                elif d == 1:
+                    selector = randint(0,2)
+                elif d == 2:
+                    selector = randint(0,3)
+                elif d == 3:
+                    selector = randint(0,4)
+
+                if selector >= 1:
                     self.board[i][j] = 0
 
-
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
 
     window = MainWindow()
     window.show()
-    sys.exit(app.exec())
-
-    # game = Sudoku([])
-    # game.create_board()
-    # game.print_board()
-    # game.solve()
-    # print("______________________________________________________")
-    # game.print_board()
+    exit(app.exec())
 
 if __name__ == "__main__":
     main()

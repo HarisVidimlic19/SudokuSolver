@@ -97,10 +97,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.resetButton, 1, 0, 1, 1)
 
-        self.hintButton = QPushButton(self.layoutWidget1)
-        self.hintButton.setObjectName(u"hintButton")
+        self.newButton = QPushButton(self.layoutWidget1)
+        self.newButton.setObjectName(u"newButton")
 
-        self.gridLayout_2.addWidget(self.hintButton, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.newButton, 2, 0, 1, 1)
 
         self.mistakes = QLabel(self.layoutWidget1)
         self.mistakes.setObjectName(u"mistakes")
@@ -116,7 +116,6 @@ class Ui_MainWindow(object):
 
         MainWindow.setCentralWidget(self.centralwidget)
         
-
         self.retranslateUi(MainWindow)
         self.resetButton.clicked.connect(MainWindow.resetBoard)
         self.tableWidget.cellChanged.connect(MainWindow.editCell)
@@ -128,9 +127,75 @@ class Ui_MainWindow(object):
         self.tableWidget_7.cellChanged.connect(MainWindow.editCell)
         self.tableWidget_8.cellChanged.connect(MainWindow.editCell)
         self.tableWidget_9.cellChanged.connect(MainWindow.editCell)
+        self.newButton.clicked.connect(MainWindow.newBoard)
+        self.solveButton.clicked.connect(MainWindow.autoSolve)
+        self.difficultyBox.currentIndexChanged.connect(MainWindow.selectDifficulty)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
+
+    def createTableWidget(self, widget: QTableWidget, widgetCount: str, row: int, column: int):        
+        # Set 3 columns
+        widget.setColumnCount(3)
+        __qtablewidgetitem = QTableWidgetItem()
+        widget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        widget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        widget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+
+        # Set 3 rows
+        widget.setRowCount(3)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        widget.setVerticalHeaderItem(0, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        widget.setVerticalHeaderItem(1, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        widget.setVerticalHeaderItem(2, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+
+        # Set each item in the table 9x9
+        widget.setItem(0, 0, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        widget.setItem(0, 1, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        widget.setItem(0, 2, __qtablewidgetitem8)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        widget.setItem(1, 0, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        widget.setItem(1, 1, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        widget.setItem(1, 2, __qtablewidgetitem11)
+        __qtablewidgetitem12 = QTableWidgetItem()
+        widget.setItem(2, 0, __qtablewidgetitem12)
+        __qtablewidgetitem13 = QTableWidgetItem()
+        widget.setItem(2, 1, __qtablewidgetitem13)
+        __qtablewidgetitem14 = QTableWidgetItem()
+        widget.setItem(2, 2, __qtablewidgetitem14)
+
+        # Set the size policy
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(widget.sizePolicy().hasHeightForWidth())
+
+        # Set the widget properties
+        widget.setSizePolicy(sizePolicy)
+        widget.setObjectName(u"tableWidget"+widgetCount)
+        widget.setMinimumSize(QSize(0, 0))
+        widget.setMaximumSize(QSize(301, 91))
+        widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        widget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        widget.setEditTriggers(QAbstractItemView.AnyKeyPressed|QAbstractItemView.DoubleClicked|QAbstractItemView.EditKeyPressed|QAbstractItemView.SelectedClicked)
+        widget.setSelectionMode(QAbstractItemView.NoSelection)
+        widget.setIconSize(QSize(0, 0))
+
+        widget.horizontalHeader().setVisible(False)
+        widget.verticalHeader().setVisible(False)
+
+        setattr(self, "tableWidget"+widgetCount, widget) # Set the widget in the class
+        self.gridLayout.addWidget(widget, row, column, 1, 1) # Add the widget to the grid layout
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
@@ -295,70 +360,7 @@ class Ui_MainWindow(object):
 
         self.solveButton.setText(QCoreApplication.translate("MainWindow", u"Solve", None))
         self.resetButton.setText(QCoreApplication.translate("MainWindow", u"Reset", None))
-        self.hintButton.setText(QCoreApplication.translate("MainWindow", u"Hint", None))
+        self.newButton.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.mistakes.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.mistakesLabel.setText(QCoreApplication.translate("MainWindow", u"Mistakes:", None))
     # retranslateUi
-
-    def createTableWidget(self, widget: QTableWidget, widgetCount: str, row: int, column: int):        
-        # Set 3 columns
-        widget.setColumnCount(3)
-        __qtablewidgetitem = QTableWidgetItem()
-        widget.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        widget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        widget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-
-        # Set 3 rows
-        widget.setRowCount(3)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        widget.setVerticalHeaderItem(0, __qtablewidgetitem3)
-        __qtablewidgetitem4 = QTableWidgetItem()
-        widget.setVerticalHeaderItem(1, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        widget.setVerticalHeaderItem(2, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-
-        # Set each item in the table 9x9
-        widget.setItem(0, 0, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        widget.setItem(0, 1, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        widget.setItem(0, 2, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        widget.setItem(1, 0, __qtablewidgetitem9)
-        __qtablewidgetitem10 = QTableWidgetItem()
-        widget.setItem(1, 1, __qtablewidgetitem10)
-        __qtablewidgetitem11 = QTableWidgetItem()
-        widget.setItem(1, 2, __qtablewidgetitem11)
-        __qtablewidgetitem12 = QTableWidgetItem()
-        widget.setItem(2, 0, __qtablewidgetitem12)
-        __qtablewidgetitem13 = QTableWidgetItem()
-        widget.setItem(2, 1, __qtablewidgetitem13)
-        __qtablewidgetitem14 = QTableWidgetItem()
-        widget.setItem(2, 2, __qtablewidgetitem14)
-
-        # Set the size policy
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(widget.sizePolicy().hasHeightForWidth())
-
-        # Set the widget properties
-        widget.setSizePolicy(sizePolicy)
-        widget.setObjectName(u"tableWidget"+widgetCount)
-        widget.setMinimumSize(QSize(0, 0))
-        widget.setMaximumSize(QSize(301, 91))
-        widget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        widget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        widget.setEditTriggers(QAbstractItemView.AnyKeyPressed|QAbstractItemView.DoubleClicked|QAbstractItemView.EditKeyPressed|QAbstractItemView.SelectedClicked)
-        widget.setSelectionMode(QAbstractItemView.NoSelection)
-        widget.setIconSize(QSize(0, 0))
-
-        widget.horizontalHeader().setVisible(False)
-        widget.verticalHeader().setVisible(False)
-
-        setattr(self, "tableWidget"+widgetCount, widget) # Set the widget in the class
-        self.gridLayout.addWidget(widget, row, column, 1, 1) # Add the widget to the grid layout

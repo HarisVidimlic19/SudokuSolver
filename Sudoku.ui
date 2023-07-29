@@ -1772,9 +1772,9 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QPushButton" name="hintButton">
+      <widget class="QPushButton" name="newButton">
        <property name="text">
-        <string>Hint</string>
+        <string>New</string>
        </property>
       </widget>
      </item>
@@ -1964,11 +1964,62 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>newButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newBoard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>388</x>
+     <y>429</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>273</x>
+     <y>426</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>autoSolve()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>553</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>648</x>
+     <y>418</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>difficultyBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectDifficulty(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>567</x>
+     <y>392</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>690</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>resetBoard()</slot>
   <slot>editCell(int,int)</slot>
   <slot>whichWidget()</slot>
   <slot>editCell(QTableWidgetItem*)</slot>
+  <slot>newBoard()</slot>
+  <slot>autoSolve()</slot>
+  <slot>selectDifficulty(int)</slot>
  </slots>
 </ui>
