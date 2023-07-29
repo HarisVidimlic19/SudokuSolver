@@ -1,3 +1,4 @@
+from copy import deepcopy
 from sys import argv, exit
 from random import randint, shuffle
 from PySide6 import QtGui, QtWidgets
@@ -39,15 +40,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             game = Sudoku([])
             game.create_board(self.difficulty)
             self.board = game.board
+            solved = 0
         else:
             game = Sudoku(board)
+            self.solved_board = deepcopy(board)
             game.remove_numbers(self.difficulty)
+            solved = 1
 
         game.print_board()
         self.setTable()
-        game.solve()
+        if solved == 0:
+            game.solve()
+            self.solved_board = game.board
+        else:
+            game.board = self.solved_board
+
         game.print_board()
-        self.solved_board = game.board
         self.auto_change = False
 
     def resetBoard(self):
@@ -105,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def selectDifficulty(self,i):
         self.difficulty = i
-        self.createGame(self.board)
+        self.createGame(self.solved_board)
         
 class Sudoku:
     '''Creating a Sudoku game using OOP and a backtracking algorithm'''
