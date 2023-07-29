@@ -14,7 +14,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Setup UI
         self.auto_change = True # Used to prevent the event class from triggering when the board is being created
-        self.setWindowIcon(QIcon('assets/icons/Sudoku.png'))
+        self.setWindowIcon(QIcon('assets/icons/Sudoku_white.png'))
         self.setupUi(self)
         self.setWindowTitle("SUDOKU")
         self.setFixedHeight(445)
@@ -257,6 +257,10 @@ def main():
     app = QApplication(argv)
 
     window = MainWindow()
+
+    app.setStyle('Fusion')
+    # app.UniversalTheme('Dark')
+
     window.show()
     exit(app.exec())
 
