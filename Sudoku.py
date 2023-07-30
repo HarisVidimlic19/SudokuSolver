@@ -90,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.counter += 1
             QtWidgets.QLabel.setText(self.mistakes, str(self.counter))
         else:
-            widget.item(i,j).setBackground(QtGui.QColor(255,255,255))
+            widget.item(i,j).setBackground(QtGui.QColor(45,45,45))
 
         widget.blockSignals(False)
 
