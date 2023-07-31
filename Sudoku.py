@@ -1,7 +1,7 @@
 from copy import deepcopy
 from sys import argv, exit
 from random import randint, shuffle
-from PySide6 import QtGui, QtWidgets
+from PySide6 import QtGui, QtWidgets, QtCore
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem
 from PySide6.QtGui import QIcon
 from new_ui_Sudoku import Ui_MainWindow
@@ -70,7 +70,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for j in range(3):
                     l = j + 3 * (k % 3) # Need to repeat 3 columns for each widget but increment as well
                     if self.board[h][l] != 0:
-                        widget.setItem(i, j, QTableWidgetItem(str(self.board[h][l])))
+                        qwit = QTableWidgetItem(str(self.board[h][l]))
+                        qwit.setFlags(~QtCore.Qt.ItemIsEditable)
+                        widget.setItem(i, j, qwit)
                     else:
                         widget.setItem(i, j, QTableWidgetItem(""))    
 
@@ -91,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QtWidgets.QLabel.setText(self.mistakes, str(self.counter))
         else:
             widget.item(i,j).setBackground(QtGui.QColor(45,45,45))
+            widget.item(i,j).setFlags(~QtCore.Qt.ItemIsEditable)
 
         widget.blockSignals(False)
 
@@ -109,7 +112,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 h = i + 3 * (k // 3) # Need to increment rows for each widget
                 for j in range(3):
                     l = j + 3 * (k % 3) # Need to repeat 3 columns for each widget but increment as well
-                    widget.setItem(i, j, QTableWidgetItem(str(self.solved_board[h][l])))
+                    qwit = QTableWidgetItem(str(self.solved_board[h][l]))
+                    qwit.setFlags(~QtCore.Qt.ItemIsEditable)
+                    widget.setItem(i, j, qwit)
     
     def selectDifficulty(self,i):
         self.difficulty = i
