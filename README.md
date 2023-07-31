@@ -1,13 +1,6 @@
 <a name="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -21,7 +14,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/dudeImpossible42/SudokuSolver">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="assets\icons\Sudoku_white.png" alt="Logo" width="32" height="32">
   </a>
 
 <h3 align="center">Sudoku Solver</h3>
@@ -64,7 +57,7 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <!-- <li><a href="#acknowledgments">Acknowledgments</a></li> -->
   </ol>
 </details>
 
@@ -73,16 +66,15 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+[![Product Name Screen Shot][product-screenshot]](https://github.com/dudeImpossible42/SudokuSolver/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
 ### Built With
-* [![Python][Python.com]][Python-url]
+* [![Python][Python.py]][python-url]
+* [![Qt][Qt.py]][qt-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -128,9 +120,11 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Sudoku Class
-- [ ] Solver Function
-    - [ ] Randomize possible boards
+- Sudoku Class
+    - Difficulty selection
+- Solver Function
+    - Randomize possible boards
+
 
 See the [open issues](https://github.com/dudeImpossible42/SudokuSolver/issues) for a full list of proposed features (and known issues).
 
@@ -159,7 +153,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-[//]: # "Distributed under the MIT License. See `LICENSE.txt` for more information."
+Distributed under the MIT License. See [`LICENSE.txt`](LICENSE.txt) for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -177,12 +171,13 @@ Project Link: [https://github.com/dudeImpossible42/SudokuSolver](https://github.
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+<!-- ## Acknowledgments
 
-[//]: # "* []()"
-[//]: # "* []()"
-[//]: # "* []()"
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+* []()
+* []()
+* []()
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
@@ -199,9 +194,17 @@ Project Link: [https://github.com/dudeImpossible42/SudokuSolver](https://github.
 [license-shield]: https://img.shields.io/github/license/dudeImpossible42/SudokuSolver.svg?style=for-the-badge
 [license-url]: https://github.com/dudeImpossible42/SudokuSolver/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[linkedin-url]: https://www.linkedin.com/in/haris-vidimlic-06730019b/
+
+[product-screenshot]: assets/photos/Screenshot-2023-07-31-102025.png
+
+[Python.py]: https://img.shields.io/badge/python-py?style=for-the-badge&logo=python&logoColor=white
+[python-url]: https://www.python.org/
+
+[Qt.py]: https://img.shields.io/badge/qt-py?style=for-the-badge&logo=qt&logoColor=white&color=black
+[qt-url]: https://www.qt.io/
+
+<!-- [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
@@ -216,4 +219,4 @@ Project Link: [https://github.com/dudeImpossible42/SudokuSolver](https://github.
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[JQuery-url]: https://jquery.com  -->
